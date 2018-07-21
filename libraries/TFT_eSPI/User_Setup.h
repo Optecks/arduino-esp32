@@ -15,13 +15,13 @@
 // ##################################################################################
 
 // Only define one driver, the other ones must be commented out
-#define ILI9341_DRIVER
+//#define ILI9341_DRIVER
 //#define ST7735_DRIVER
 //#define ILI9163_DRIVER
 //#define S6D02A1_DRIVER
 //#define RPI_ILI9486_DRIVER // 20MHz maximum SPI
 //#define HX8357D_DRIVER
-//#define ILI9481_DRIVER
+#define ILI9481_DRIVER
 //#define ILI9488_DRIVER
 
 // For M5Stack ESP32 module with integrated display ONLY, remove // in line below
@@ -87,8 +87,8 @@
 // ###### EDIT THE PIN NUMBERS IN THE LINES FOLLOWING TO SUIT YOUR ESP8266 SETUP ######
 
 // For NodeMCU - use pin numbers in the form PIN_Dx where Dx is the NodeMCU pin designation
-//#define TFT_CS   PIN_D8  // Chip select control pin D8
-//#define TFT_DC   PIN_D3  // Data Command control pin
+//#define TFT_CS   D8  // Chip select control pin D8
+//#define TFT_DC   D4  // Data Command control pin
 //#define TFT_RST  PIN_D4  // Reset pin (could connect to NodeMCU RST, see next line)
 //#define TFT_RST  -1  // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
 
@@ -117,13 +117,13 @@
 // For ESP32 Dev board (only tested with ILI9341 display)
 // The hardware SPI can be mapped to any pins
 
-#define TFT_MISO 19
-#define TFT_MOSI 23
-#define TFT_SCLK 18
-#define TFT_CS    15  // Chip select control pin
-#define TFT_DC    2  // Data Command control pin
+//#define TFT_MISO 19
+//#define TFT_MOSI 23
+//#define TFT_SCLK 18
+//#define TFT_CS    15  // Chip select control pin
+//#define TFT_DC    2  // Data Command control pin
 //#define TFT_RST   4  // Reset pin (could connect to RST pin)
-#define TFT_RST  -1  // Set TFT_RST to -1 if display RESET is connected to ESP32 board RST
+//#define TFT_RST  -1  // Set TFT_RST to -1 if display RESET is connected to ESP32 board RST
 
 // For the M5Stack module use these #define lines
 //#define TFT_MISO 19
@@ -148,24 +148,24 @@
 // Parallel bus is only supported on ESP32
 // Uncomment line below to use ESP32 Parallel interface instead of SPI
 
-//#define ESP32_PARALLEL
+#define ESP32_PARALLEL
 
-// The ESP32 and TFT the pins used for testing are:
-//#define TFT_CS   33  // Chip select control pin (library pulls permanently low
-//#define TFT_DC   15  // Data Command control pin - use a pin in the range 0-31
-//#define TFT_RST  -1 // Reset pin, toggles on startup
+// The EadwwSP32 and TFT the pins used for testing are:
+#define TFT_CS   33  // Chip select control pin (library pulls permanently low
+#define TFT_DC   15  // Data Command control pin - use a pin in the range 0-31
+#define TFT_RST  -1  // Reset pin, toggles on startup
 
-//#define TFT_WR    4  // Write strobe control pin - use a pin in the range 0-31
-//#define TFT_RD    2  // Read strobe control pin  - use a pin in the range 0-31
+#define TFT_WR   22  // Write strobe control pin - use a pin in the range 0-31
+#define TFT_RD    3  // Read strobe control pin  - use a pin in the range 0-31
 
-//#define TFT_D0   22  // Must use pins in the range 0-31 for the data bus
-//#define TFT_D1   13  // so a single register write sets/clears all bits.
-//#define TFT_D2   9  // Pins can be randomly assigned, this does not affect
-//#define TFT_D3   0  // TFT screen update performance.
-//#define TFT_D4   17
-//#define TFT_D5   16
-//#define TFT_D6   27
-//#define TFT_D7   14
+#define TFT_D0   12  // Must use pins in the range 0-31 for the data bus
+#define TFT_D1   13  // so a single register write sets/clears all bits.
+#define TFT_D2    2  // Pins can be randomly assigned, this does not affect
+#define TFT_D3   16  // TFT screen update performance.
+#define TFT_D4   17
+#define TFT_D5    4
+#define TFT_D6   27
+#define TFT_D7   14
 
 // ##################################################################################
 //
