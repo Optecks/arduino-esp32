@@ -87,8 +87,8 @@
 // ###### EDIT THE PIN NUMBERS IN THE LINES FOLLOWING TO SUIT YOUR ESP8266 SETUP ######
 
 // For NodeMCU - use pin numbers in the form PIN_Dx where Dx is the NodeMCU pin designation
-//#define TFT_CS   D8  // Chip select control pin D8
-//#define TFT_DC   D4  // Data Command control pin
+//#define TFT_CS   PIN_D8  // Chip select control pin D8
+//#define TFT_DC   PIN_D3  // Data Command control pin
 //#define TFT_RST  PIN_D4  // Reset pin (could connect to NodeMCU RST, see next line)
 //#define TFT_RST  -1  // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
 
@@ -150,18 +150,18 @@
 
 #define ESP32_PARALLEL
 
-// The EadwwSP32 and TFT the pins used for testing are:
+// The ESP32 and TFT the pins used for testing are:
 #define TFT_CS   33  // Chip select control pin (library pulls permanently low
 #define TFT_DC   15  // Data Command control pin - use a pin in the range 0-31
-#define TFT_RST  -1  // Reset pin, toggles on startup
+#define TFT_RST  -1 // Reset pin, toggles on startup
 
 #define TFT_WR   22  // Write strobe control pin - use a pin in the range 0-31
 #define TFT_RD    3  // Read strobe control pin  - use a pin in the range 0-31
 
 #define TFT_D0   12  // Must use pins in the range 0-31 for the data bus
 #define TFT_D1   13  // so a single register write sets/clears all bits.
-#define TFT_D2    2  // Pins can be randomly assigned, this does not affect
-#define TFT_D3   16  // TFT screen update performance.
+#define TFT_D2    2 // Pins can be randomly assigned, this does not affect
+#define TFT_D3   16 // TFT screen update performance.
 #define TFT_D4   17
 #define TFT_D5    4
 #define TFT_D6   27
