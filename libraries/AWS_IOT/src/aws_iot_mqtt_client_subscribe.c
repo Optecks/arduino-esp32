@@ -40,7 +40,9 @@ extern "C" {
 #endif
 
 #include "aws_iot_mqtt_client_common_internal.h"
+#include "esp_log.h"
 
+static const char *TAG = "AWS_IOT";
 /**
   * Serializes the supplied subscribe data into the supplied buffer, ready for sending
   * @param pTxBuf the buffer into which the packet will be serialized
@@ -245,6 +247,11 @@ static IoT_Error_t _aws_iot_mqtt_internal_subscribe(AWS_IoT_Client *pClient, con
 	/* Granted QoS can be 0, 1 or 2 */
 	rc = _aws_iot_mqtt_deserialize_suback(&rxPacketId, 1, &count, grantedQoS, pClient->clientData.readBuf,
 										  pClient->clientData.readBufSize);
+		
+	ESP_LOGE(TAG, "count : %d ", count);		
+	ESP_LOGE(TAG, "grantedQoS[0] : %d ", grantedQoS[0]);
+	ESP_LOGE(TAG, "grantedQoS[1] : %d ", grantedQoS[1]);
+	ESP_LOGE(TAG, "grantedQoS[2] : %d ", grantedQoS[2]);
 	if(SUCCESS != rc) {
 		FUNC_EXIT_RC(rc);
 	}

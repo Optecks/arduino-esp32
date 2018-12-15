@@ -44,6 +44,9 @@ extern "C" {
 #include <unistd.h>
 #include "aws_iot_mqtt_client_common_internal.h"
 
+#include "esp_log.h"
+static const char *TAG = "AWS_IOT";
+
 /* Max length of packet header */
 #define MAX_NO_OF_REMAINING_LENGTH_BYTES 4
 
@@ -288,12 +291,17 @@ IoT_Error_t aws_iot_mqtt_internal_send_packet(AWS_IoT_Client *pClient, size_t le
 
 	sentLen = 0;
 	sent = 0;
-
+	
+	ESP_LOGI(TAG, "pTimer->start_ticks : %d ", pTimer->start_ticks);
+	ESP_LOGI(TAG, "pTimer->timeout_ticks : %d ", pTimer->timeout_ticks);
+	ESP_LOGI(TAG, "pTimer->last_polled_ticks : %d ", pTimer->last_polled_ticks);
 	while(sent < length && !has_timer_expired(pTimer)) {
+		ESP_LOGI(TAG, "sentIteration : %d ", sent);
 		rc = pClient->networkStack.write(&(pClient->networkStack), &pClient->clientData.writeBuf[sent], length - sent, pTimer,
 										 &sentLen);
 		if(SUCCESS != rc) {
-			/* there was an error writing the data */
+			/* there was an error writing the data */			
+			ESP_LOGE(TAG, "Write Faileir: %d ", rc);
 			break;
 		}
 		sent += sentLen;
@@ -305,7 +313,8 @@ IoT_Error_t aws_iot_mqtt_internal_send_packet(AWS_IoT_Client *pClient, size_t le
 		FUNC_EXIT_RC(rc);
 	}
 #endif
-
+	ESP_LOGE(TAG, "sent : %d ", sent);
+	ESP_LOGE(TAG, "length : %d ", length);
 	if(sent == length) {
 		/* record the fact that we have successfully sent the packet */
 		//countdown_sec(&c->pingTimer, c->clientData.keepAliveInterval);
@@ -523,7 +532,8 @@ static IoT_Error_t _aws_iot_mqtt_internal_handle_publish(AWS_IoT_Client *pClient
 	if(SUCCESS != rc) {
 		FUNC_EXIT_RC(rc);
 	}
-
+	ESP_LOGE(TAG, "msg.qos : %d ", msg.qos);
+	
 	if(QOS0 == msg.qos) {
 		/* No further processing required for QoS0 */
 		FUNC_EXIT_RC(SUCCESS);
@@ -532,12 +542,15 @@ static IoT_Error_t _aws_iot_mqtt_internal_handle_publish(AWS_IoT_Client *pClient
 	/* Message assumed to be QoS1 since we do not support QoS2 at this time */
 	rc = aws_iot_mqtt_internal_serialize_ack(pClient->clientData.writeBuf, pClient->clientData.writeBufSize,
 											 PUBACK, 0, msg.id, &len);
-
+	ESP_LOGE(TAG, "rc : %d ", rc);
 	if(SUCCESS != rc) {
 		FUNC_EXIT_RC(rc);
 	}
-
+	const auto temp = pTimer->timeout_ticks;
+	pTimer->timeout_ticks = 2000;
 	rc = aws_iot_mqtt_internal_send_packet(pClient, len, pTimer);
+	pTimer->timeout_ticks = temp;
+	ESP_LOGE(TAG, "rc : %d ", rc);
 	if(SUCCESS != rc) {
 		FUNC_EXIT_RC(rc);
 	}

@@ -58,6 +58,7 @@ char AWS_IOT_HOST_ADDRESS[128];
 char cPayload[512];
 AWS_IoT_Client client;
 IoT_Publish_Message_Params paramsQOS0;
+IoT_Publish_Message_Params paramsQOS1;
 pSubCallBackHandler_t subApplCallBackHandler = 0;
 
 
@@ -114,7 +115,7 @@ void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data)
 }
 
 
-int AWS_IOT::connect(const char *hostAddress, const char *clientID)
+int AWS_IOT::connect(const char *hostAddress, const char *clientID, char* will_topic, const uint16_t will_topic_len)
 {
     const size_t stack_size = 36*1024;
     
@@ -158,7 +159,19 @@ int AWS_IOT::connect(const char *hostAddress, const char *clientID)
     /* Client ID is set in the menuconfig of the example */
     connectParams.pClientID = clientID;
     connectParams.clientIDLen = (uint16_t) strlen(clientID);
-    connectParams.isWillMsgPresent = false;
+    connectParams.isWillMsgPresent = true;
+	IoT_MQTT_Will_Options will_msg;
+	will_msg.struct_id[0] = 'M';
+	will_msg.struct_id[1] = 'Q';
+	will_msg.struct_id[2] = 'T';
+	will_msg.struct_id[3] = 'W';
+	will_msg.pTopicName = will_topic;
+	will_msg.topicNameLen = will_topic_len;
+	will_msg.pMessage = "{\"is_alive\":false}";
+	will_msg.msgLen = 2;
+	will_msg.isRetained = false;
+	will_msg.qos = QOS0;
+	connectParams.will = will_msg;
 
     ESP_LOGI(TAG, "Connecting to AWS...");
     
@@ -178,14 +191,14 @@ int AWS_IOT::connect(const char *hostAddress, const char *clientID)
      *  #AWS_IOT_MQTT_MIN_RECONNECT_WAIT_INTERVAL
      *  #AWS_IOT_MQTT_MAX_RECONNECT_WAIT_INTERVAL
      */
-  /*  rc = aws_iot_mqtt_autoreconnect_set_status(&client, true);
+    rc = aws_iot_mqtt_autoreconnect_set_status(&client, true);
     if(SUCCESS != rc) {
         ESP_LOGE(TAG, "Unable to set Auto Reconnect to true - %d", rc);
         abort();
-    } */   
+    } 
     
     if(rc == SUCCESS)
-    xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", stack_size, NULL, 5, NULL, 1);
+    xTaskCreate(&aws_iot_task, "aws_iot_task", stack_size, NULL, 5, NULL);
 
     return rc;
 }
@@ -197,16 +210,21 @@ int AWS_IOT::disconnect()
 	return rc;
 }
 
-int AWS_IOT::publish(const char *pubtopic,const char *pubPayLoad)
+int AWS_IOT::publish(const char *pubtopic,const char *pubPayLoad, const bool isRetained)
 {
     IoT_Error_t rc;
 
     paramsQOS0.qos = QOS0;
     paramsQOS0.payload = (void *) pubPayLoad;
-    paramsQOS0.isRetained = 0;
-
+    paramsQOS0.isRetained = isRetained;
     paramsQOS0.payloadLen = strlen(pubPayLoad);
-    rc = aws_iot_mqtt_publish(&client, pubtopic, strlen(pubtopic), &paramsQOS0);
+	
+	paramsQOS1.qos = QOS1;
+    paramsQOS1.payload = (void *) pubPayLoad;
+    paramsQOS1.isRetained = isRetained;
+    paramsQOS1.payloadLen = strlen(pubPayLoad);
+	
+    rc = aws_iot_mqtt_publish(&client, pubtopic, strlen(pubtopic), &paramsQOS1);
     
     return rc;  
 }
@@ -220,7 +238,7 @@ int AWS_IOT::subscribe(const char *subTopic, pSubCallBackHandler_t pSubCallBackH
     subApplCallBackHandler = pSubCallBackHandler;
 
     ESP_LOGI(TAG, "Subscribing...");
-    rc = aws_iot_mqtt_subscribe(&client, subTopic, strlen(subTopic), QOS0, iot_subscribe_callback_handler, user_data);
+    rc = aws_iot_mqtt_subscribe(&client, subTopic, strlen(subTopic), QOS1, iot_subscribe_callback_handler, user_data);
     if(SUCCESS != rc) {
         ESP_LOGE(TAG, "Error subscribing : %d ", rc);
         return rc;

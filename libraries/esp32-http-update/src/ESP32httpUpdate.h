@@ -36,6 +36,8 @@
 #include "FS.h"
 #include "SPIFFS.h"
 
+#define DEBUG_ESP_HTTP_UPDATE
+#define DEBUG_ESP_PORT Serial
 #ifdef DEBUG_ESP_HTTP_UPDATE
 #ifdef DEBUG_ESP_PORT
 #define DEBUG_HTTP_UPDATE(...) DEBUG_ESP_PORT.printf( __VA_ARGS__ )

@@ -29,6 +29,7 @@ and that both those copyright notices and this permission notice appear in suppo
 #ifndef _HORNBILL_AWS_IOT_LIB_H_
 #define _HORNBILL_AWS_IOT_LIB_H_
 
+#include <stdint.h>
 
 typedef void (*pSubCallBackHandler_t)(const char *topicName,const int topicNameLen, const char *payLoad, const int payloadLen, void* user_data);
 
@@ -37,9 +38,9 @@ class AWS_IOT{
     private:
     
     public:
-    int connect(const char *hostAddress, const char *clientID);
+    int connect(const char *hostAddress, const char *clientID, char* will_topic, const uint16_t will_topic_len);
 	int disconnect();
-    int publish(const char *pubtopic, const char *pubPayLoad);
+    int publish(const char *pubtopic, const char *pubPayLoad, const bool isRetained = false);
     int subscribe(const char *subTopic, pSubCallBackHandler_t pSubCallBackHandler, void* user_data);
 };
 

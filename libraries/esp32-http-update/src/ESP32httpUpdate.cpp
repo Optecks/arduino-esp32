@@ -169,7 +169,7 @@ HTTPUpdateResult ESP32HTTPUpdate::handleUpdate(HTTPClient& http, const String& c
 
     // use HTTP/1.0 for update since the update handler not support any transfer Encoding
     http.useHTTP10(true);
-    http.setTimeout(30000); // allow time to download on slower networks
+    http.setTimeout(65535); // allow time to download on slower networks
     http.setUserAgent(F("ESP32-http-Update"));
     http.addHeader(F("x-ESP32-STA-MAC"), WiFi.macAddress());
     http.addHeader(F("x-ESP32-AP-MAC"), WiFi.softAPmacAddress());
@@ -364,8 +364,10 @@ bool ESP32HTTPUpdate::runUpdate(Stream& in, uint32_t size, String md5, int comma
             return false;
         }
     }
-
-    if(Update.writeStream(in) != size) {
+	const auto temp = Update.writeStream(in);
+    if(temp != size) {
+		DEBUG_HTTP_UPDATE("[httpUpdate] Update.writeStream failed! (%d)\n",size);
+		DEBUG_HTTP_UPDATE("[httpUpdate] Update.writeStream failed! (%d)\n",temp);
         _lastError = Update.getError();
         Update.printError(error);
         error.trim(); // remove line ending
