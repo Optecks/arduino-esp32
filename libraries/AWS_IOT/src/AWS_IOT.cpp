@@ -168,7 +168,7 @@ int AWS_IOT::connect(const char *hostAddress, const char *clientID, char* will_t
 	will_msg.pTopicName = will_topic;
 	will_msg.topicNameLen = will_topic_len;
 	will_msg.pMessage = "{\"is_alive\":false}";
-	will_msg.msgLen = 2;
+	will_msg.msgLen = 18;
 	will_msg.isRetained = false;
 	will_msg.qos = QOS0;
 	connectParams.will = will_msg;
