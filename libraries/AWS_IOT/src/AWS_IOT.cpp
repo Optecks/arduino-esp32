@@ -56,8 +56,8 @@ static const char *TAG = "AWS_IOT";
 char AWS_IOT_HOST_ADDRESS[128];
 
 char cPayload[512];
-AWS_IoT_Client client;
-IoT_Publish_Message_Params paramsQOS0;
+
+//IoT_Publish_Message_Params paramsQOS0;
 IoT_Publish_Message_Params paramsQOS1;
 pSubCallBackHandler_t subApplCallBackHandler = 0;
 
@@ -197,8 +197,10 @@ int AWS_IOT::connect(const char *hostAddress, const char *clientID, char* will_t
         abort();
     } 
     
-    if(rc == SUCCESS)
-    xTaskCreate(&aws_iot_task, "aws_iot_task", stack_size, NULL, 5, NULL);
+    if(rc == SUCCESS){
+		//xTaskCreate(&aws_iot_task, "aws_iot_task", stack_size, NULL, 5, NULL);
+		//xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", stack_size, NULL, 5, NULL, 0);
+	}
 
     return rc;
 }
@@ -214,10 +216,10 @@ int AWS_IOT::publish(const char *pubtopic,const char *pubPayLoad, const bool isR
 {
     IoT_Error_t rc;
 
-    paramsQOS0.qos = QOS0;
-    paramsQOS0.payload = (void *) pubPayLoad;
-    paramsQOS0.isRetained = isRetained;
-    paramsQOS0.payloadLen = strlen(pubPayLoad);
+    // paramsQOS0.qos = QOS0;
+    // paramsQOS0.payload = (void *) pubPayLoad;
+    // paramsQOS0.isRetained = isRetained;
+    // paramsQOS0.payloadLen = strlen(pubPayLoad);
 	
 	paramsQOS1.qos = QOS1;
     paramsQOS1.payload = (void *) pubPayLoad;
@@ -248,25 +250,25 @@ int AWS_IOT::subscribe(const char *subTopic, pSubCallBackHandler_t pSubCallBackH
     return rc;
 }
 
-
-
-
-void aws_iot_task(void *param) {
-
-IoT_Error_t rc = SUCCESS;
-
-    while(1)
-    {
-        //Max time the yield function will wait for read messages
-        rc = aws_iot_mqtt_yield(&client, 200);
-        
-        if(NETWORK_ATTEMPTING_RECONNECT == rc)
-        {
-            // If the client is attempting to reconnect we will skip the rest of the loop.
-            continue;
-        }
-
-        
-        vTaskDelay(1000 / portTICK_RATE_MS);
-    }
+bool AWS_IOT::handle(){
+	IoT_Error_t rc = aws_iot_mqtt_yield(&client, 200);
+	return SUCCESS == rc;	
 }
+
+
+
+// void aws_iot_task(void *param) {
+	// IoT_Error_t rc = SUCCESS;
+    // while(1)
+    // {
+        // //Max time the yield function will wait for read messages
+        // rc = aws_iot_mqtt_yield(&client, 200);
+        
+        // if(NETWORK_ATTEMPTING_RECONNECT == rc)
+        // {
+            // // If the client is attempting to reconnect we will skip the rest of the loop.
+            // continue;
+        // }        
+        // vTaskDelay(1000 / portTICK_RATE_MS);
+    // }
+// }

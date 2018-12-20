@@ -248,10 +248,10 @@ static IoT_Error_t _aws_iot_mqtt_internal_subscribe(AWS_IoT_Client *pClient, con
 	rc = _aws_iot_mqtt_deserialize_suback(&rxPacketId, 1, &count, grantedQoS, pClient->clientData.readBuf,
 										  pClient->clientData.readBufSize);
 		
-	ESP_LOGE(TAG, "count : %d ", count);		
+	/*ESP_LOGE(TAG, "count : %d ", count);		
 	ESP_LOGE(TAG, "grantedQoS[0] : %d ", grantedQoS[0]);
 	ESP_LOGE(TAG, "grantedQoS[1] : %d ", grantedQoS[1]);
-	ESP_LOGE(TAG, "grantedQoS[2] : %d ", grantedQoS[2]);
+	ESP_LOGE(TAG, "grantedQoS[2] : %d ", grantedQoS[2]);*/
 	if(SUCCESS != rc) {
 		FUNC_EXIT_RC(rc);
 	}

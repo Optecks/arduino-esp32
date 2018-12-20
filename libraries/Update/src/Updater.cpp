@@ -332,7 +332,6 @@ size_t UpdateClass::writeStream(Stream &data) {
         if(_progress_callback) {
             _progress_callback(_progress, _size);
         }
-		Serial.println(written);
     }
     if(_progress_callback) {
         _progress_callback(_size, _size);

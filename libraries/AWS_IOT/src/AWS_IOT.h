@@ -31,17 +31,19 @@ and that both those copyright notices and this permission notice appear in suppo
 
 #include <stdint.h>
 
+#include "aws_iot_mqtt_client.h"
+
 typedef void (*pSubCallBackHandler_t)(const char *topicName,const int topicNameLen, const char *payLoad, const int payloadLen, void* user_data);
 
-class AWS_IOT{
-    
+class AWS_IOT{    
     private:
-    
+		AWS_IoT_Client client;
     public:
-    int connect(const char *hostAddress, const char *clientID, char* will_topic, const uint16_t will_topic_len);
-	int disconnect();
-    int publish(const char *pubtopic, const char *pubPayLoad, const bool isRetained = false);
-    int subscribe(const char *subTopic, pSubCallBackHandler_t pSubCallBackHandler, void* user_data);
+		int connect(const char *hostAddress, const char *clientID, char* will_topic, const uint16_t will_topic_len);
+		int disconnect();
+		int publish(const char *pubtopic, const char *pubPayLoad, const bool isRetained = false);
+		int subscribe(const char *subTopic, pSubCallBackHandler_t pSubCallBackHandler, void* user_data);
+		bool handle();
 };
 
 
