@@ -177,7 +177,8 @@ void TFT_eSPI::loadMetrics(uint16_t gCount)
     gNum++;
     yield();
   }
-
+gFont.maxAscent  = gFont.ascent;   // Determined from metrics
+	gFont.maxDescent = gFont.descent;  // Determined from metrics
   gFont.yAdvance = gFont.maxAscent + gFont.maxDescent;
 
   gFont.spaceWidth = (gFont.ascent + gFont.descent) * 2/7;  // Guess at space width
