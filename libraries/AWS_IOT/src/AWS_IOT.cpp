@@ -115,7 +115,7 @@ void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data)
 }
 
 
-int AWS_IOT::connect(const char *hostAddress, const char *clientID, char* will_topic, const uint16_t will_topic_len)
+int AWS_IOT::connect(const char *hostAddress, const char *clientID, const char* will_topic, const uint16_t will_topic_len)
 {
     const size_t stack_size = 36*1024;
     
@@ -165,7 +165,7 @@ int AWS_IOT::connect(const char *hostAddress, const char *clientID, char* will_t
 	will_msg.struct_id[1] = 'Q';
 	will_msg.struct_id[2] = 'T';
 	will_msg.struct_id[3] = 'W';
-	will_msg.pTopicName = will_topic;
+	will_msg.pTopicName = const_cast<char*>(will_topic);
 	will_msg.topicNameLen = will_topic_len;
 	will_msg.pMessage = "{\"is_alive\":false}";
 	will_msg.msgLen = 18;

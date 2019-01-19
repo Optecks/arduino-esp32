@@ -32,6 +32,8 @@
 
 fontMetrics gFont = { 0, 0, 0, 0, 0, 0, 0 };
 
+  uint16_t* gUnicodeIndexHash = NULL;
+  uint8_t* gBitmapData = NULL;
   // These are for the metrics for each individual glyph (so we don't need to seek this in file and waste time)
   uint16_t* gUnicode = NULL;  //UTF-16 code, the codes are searched so do not need to be sequential
   uint8_t*  gHeight = NULL;   //cheight

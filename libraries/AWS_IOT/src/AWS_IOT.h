@@ -39,7 +39,7 @@ class AWS_IOT{
     private:
 		AWS_IoT_Client client;
     public:
-		int connect(const char *hostAddress, const char *clientID, char* will_topic, const uint16_t will_topic_len);
+		int connect(const char *hostAddress, const char *clientID,const char* will_topic, const uint16_t will_topic_len);
 		int disconnect();
 		int publish(const char *pubtopic, const char *pubPayLoad, const bool isRetained = false);
 		int subscribe(const char *subTopic, pSubCallBackHandler_t pSubCallBackHandler, void* user_data);

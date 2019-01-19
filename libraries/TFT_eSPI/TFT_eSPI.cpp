@@ -2021,7 +2021,7 @@ int16_t TFT_eSPI::textWidth(const char *string, int font)
   int str_width  = 0;
 
 #ifdef SMOOTH_FONT
-  if(fontLoaded)
+  if(fontLoaded && font != 1)
   {
     while (*string)
     {
@@ -2113,7 +2113,7 @@ uint16_t TFT_eSPI::fontsLoaded(void)
 int16_t TFT_eSPI::fontHeight(int16_t font)
 {
 #ifdef SMOOTH_FONT
-  if(fontLoaded) return gFont.yAdvance;
+  if(fontLoaded && font != 1) return gFont.yAdvance;
 #endif
 
 #ifdef LOAD_GFXFF
@@ -4097,7 +4097,7 @@ int16_t TFT_eSPI::drawString(const char *string, int poX, int poY, int font)
 
     // If it is not font 1 (GLCD or free font) get the baseline and pixel height of the font
 #ifdef SMOOTH_FONT
-    if(fontLoaded) {
+    if(fontLoaded && font != 1) {
       baseline = gFont.maxAscent;
       cheight  = fontHeight(0);
     }
@@ -4194,7 +4194,7 @@ int16_t TFT_eSPI::drawString(const char *string, int poX, int poY, int font)
 #endif
 
 #ifdef SMOOTH_FONT
-  if(fontLoaded)
+  if(fontLoaded && font != 1)
   {
     if (textcolor!=textbgcolor) fillRect(poX, poY, cwidth, cheight, textbgcolor);
     //drawLine(poX - 5, poY, poX + 5, poY, TFT_GREEN);
