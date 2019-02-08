@@ -44,6 +44,8 @@ class AWS_IOT{
 		int publish(const char *pubtopic, const char *pubPayLoad, const bool isRetained = false);
 		int subscribe(const char *subTopic, pSubCallBackHandler_t pSubCallBackHandler, void* user_data);
 		bool handle();
+		ClientState state();
+		bool reconnect();
 };
 
 

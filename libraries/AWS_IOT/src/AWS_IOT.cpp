@@ -175,32 +175,30 @@ int AWS_IOT::connect(const char *hostAddress, const char *clientID, const char* 
 
     ESP_LOGI(TAG, "Connecting to AWS...");
     
-    do {
-        rc = aws_iot_mqtt_connect(&client, &connectParams);
+	rc = aws_iot_mqtt_connect(&client, &connectParams);
+	
+	if(SUCCESS != rc) {
+		ESP_LOGE(TAG, "Error(%d) connecting to %s:%d.", rc, mqttInitParams.pHostURL, mqttInitParams.port);
+		
+	}
         
-        if(SUCCESS != rc) {
-            ESP_LOGE(TAG, "Error(%d) connecting to %s:%d, \n\rTrying to reconnect", rc, mqttInitParams.pHostURL, mqttInitParams.port);
-            
-        }
-        
-    } while(SUCCESS != rc);
-  
+ 
 
     /*
      * Enable Auto Reconnect functionality. Minimum and Maximum time of Exponential backoff are set in aws_iot_config.h
      *  #AWS_IOT_MQTT_MIN_RECONNECT_WAIT_INTERVAL
      *  #AWS_IOT_MQTT_MAX_RECONNECT_WAIT_INTERVAL
      */
-    rc = aws_iot_mqtt_autoreconnect_set_status(&client, true);
-    if(SUCCESS != rc) {
-        ESP_LOGE(TAG, "Unable to set Auto Reconnect to true - %d", rc);
-        abort();
-    } 
+    //rc = aws_iot_mqtt_autoreconnect_set_status(&client, true);
+    //if(SUCCESS != rc) {
+        //ESP_LOGE(TAG, "Unable to set Auto Reconnect to true - %d", rc);
+        //abort();
+    //} 
     
-    if(rc == SUCCESS){
+    //if(rc == SUCCESS){
 		//xTaskCreate(&aws_iot_task, "aws_iot_task", stack_size, NULL, 5, NULL);
 		//xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", stack_size, NULL, 5, NULL, 0);
-	}
+	//}
 
     return rc;
 }
@@ -256,6 +254,13 @@ bool AWS_IOT::handle(){
 }
 
 
+ClientState AWS_IOT::state(){
+	return aws_iot_mqtt_get_client_state(&client);
+}
+
+bool AWS_IOT::reconnect(){
+	return aws_iot_mqtt_attempt_reconnect(&client) == SUCCESS;
+}
 
 // void aws_iot_task(void *param) {
 	// IoT_Error_t rc = SUCCESS;
