@@ -259,7 +259,9 @@ ClientState AWS_IOT::state(){
 }
 
 bool AWS_IOT::reconnect(){
-	return aws_iot_mqtt_attempt_reconnect(&client) == SUCCESS;
+	const auto err = aws_iot_mqtt_attempt_reconnect(&client);
+	ESP_LOGE(TAG, "Reconnect Error: %d", err);
+	return err == SUCCESS || err == NETWORK_RECONNECTED;
 }
 
 // void aws_iot_task(void *param) {
