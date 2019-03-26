@@ -255,7 +255,10 @@ typedef struct _ClientStatus {
  * Contains data used by the MQTT Client
  *
  */
-typedef struct _ClientData {
+
+ typedef struct _ClientData{
+
+	
 	uint16_t nextPacketId;
 
 	uint32_t packetTimeoutMs;
@@ -270,8 +273,8 @@ typedef struct _ClientData {
 	size_t writeBufSize;
 	size_t readBufSize;
 
-	unsigned char writeBuf[AWS_IOT_MQTT_TX_BUF_LEN];
-	unsigned char readBuf[AWS_IOT_MQTT_RX_BUF_LEN];
+	unsigned char* writeBuf;
+	unsigned char* readBuf;
 
 #ifdef _ENABLE_THREAD_SUPPORT_
 	bool isBlockOnThreadLockEnabled;
@@ -287,6 +290,7 @@ typedef struct _ClientData {
 
 	void *disconnectHandlerData;
 } ClientData;
+
 
 /**
  * @brief MQTT Client

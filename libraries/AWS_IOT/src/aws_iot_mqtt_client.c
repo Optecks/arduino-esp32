@@ -175,7 +175,9 @@ IoT_Error_t aws_iot_mqtt_init(AWS_IoT_Client *pClient, const IoT_Client_Init_Par
 
 	pClient->clientData.packetTimeoutMs = pInitParams->mqttPacketTimeout_ms;
 	pClient->clientData.commandTimeoutMs = pInitParams->mqttCommandTimeout_ms;
+	pClient->clientData.writeBuf = (unsigned char*) malloc(AWS_IOT_MQTT_TX_BUF_LEN * sizeof(unsigned char));
 	pClient->clientData.writeBufSize = AWS_IOT_MQTT_TX_BUF_LEN;
+	pClient->clientData.readBuf = (unsigned char*) malloc(AWS_IOT_MQTT_RX_BUF_LEN * sizeof(unsigned char));
 	pClient->clientData.readBufSize = AWS_IOT_MQTT_RX_BUF_LEN;
 	pClient->clientData.counterNetworkDisconnected = 0;
 	pClient->clientData.disconnectHandler = pInitParams->disconnectHandler;
