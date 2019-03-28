@@ -30,6 +30,7 @@ and that both those copyright notices and this permission notice appear in suppo
 #define _HORNBILL_AWS_IOT_LIB_H_
 
 #include <stdint.h>
+#include "Arduino.h"
 
 #include "aws_iot_mqtt_client.h"
 
@@ -46,6 +47,9 @@ class AWS_IOT{
 		bool handle();
 		ClientState state();
 		bool reconnect();
+		String aws_root_ca_pem;
+		String certificate_pem_crt;
+		String private_pem_key;
 };
 
 

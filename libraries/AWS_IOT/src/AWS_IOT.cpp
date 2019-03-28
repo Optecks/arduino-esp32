@@ -68,10 +68,6 @@ pSubCallBackHandler_t subApplCallBackHandler = 0;
 
    "Embedded Certs" are stored in the file aws_iot_certificates.c as arrays
 */
-extern const char aws_root_ca_pem[];
-extern const char certificate_pem_crt[];
-extern const char private_pem_key[];
-
 
 
 void aws_iot_task(void *param);
@@ -134,11 +130,10 @@ int AWS_IOT::connect(const char *hostAddress, const char *clientID, const char* 
     mqttInitParams.port = CONFIG_AWS_IOT_MQTT_PORT;
 
 
-    mqttInitParams.pRootCALocation = (const char *)aws_root_ca_pem;
-    mqttInitParams.pDeviceCertLocation = (const char *)certificate_pem_crt;
-    mqttInitParams.pDevicePrivateKeyLocation = (const char *)private_pem_key;
-
-
+    mqttInitParams.pRootCALocation = aws_root_ca_pem.c_str();
+    mqttInitParams.pDeviceCertLocation = certificate_pem_crt.c_str();
+    mqttInitParams.pDevicePrivateKeyLocation = private_pem_key.c_str();
+	
     mqttInitParams.mqttCommandTimeout_ms = 20000;
     mqttInitParams.tlsHandshakeTimeout_ms = 5000;
     mqttInitParams.isSSLHostnameVerify = true;
