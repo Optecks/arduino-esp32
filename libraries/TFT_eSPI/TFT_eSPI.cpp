@@ -3638,11 +3638,11 @@ size_t TFT_eSPI::write(uint8_t utf8)
 
     //fontFile = SPIFFS.open( _gFontFilename, "r" );
 
-    if(!fontFile)
-    {
-      fontLoaded = false;
-      return 0;
-    }
+    // if(!fontFile)
+    // {
+      // fontLoaded = false;
+      // return 0;
+    // }
 
     drawGlyph(unicode);
 
@@ -4200,7 +4200,7 @@ int16_t TFT_eSPI::drawString(const char *string, int poX, int poY, int font)
     //drawLine(poX - 5, poY, poX + 5, poY, TFT_GREEN);
     //drawLine(poX, poY - 5, poX, poY + 5, TFT_GREEN);
     //fontFile = SPIFFS.open( _gFontFilename, "r");
-    if(!fontFile) return 0;
+    //if(!fontFile) return 0;
     uint16_t len = strlen(string);
     uint16_t n = 0;
     setCursor(poX, poY);

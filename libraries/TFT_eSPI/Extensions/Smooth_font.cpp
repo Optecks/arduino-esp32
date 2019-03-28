@@ -103,14 +103,14 @@ void TFT_eSPI::loadFont(String fontName)
   // Fetch the metrics for each glyph
   loadMetrics(gFont.gCount);
 
-  //fontFile.close();
+  fontFile.close();
 }
 
 
 uint16_t hash_unicode(const uint16_t unicode){
-	return (unicode <= 0x3B) *                       (unicode - 37) + 
-		   (unicode >= 0x621 && unicode <= 0x66c)*   (unicode - 1569 + 23) +
-		   (unicode >= 0xFE80 && unicode <= 0xFEFC)* (unicode - 65152 + 98);
+	return (unicode <= 0x0040) * (unicode - 0x0020) + 
+		   (unicode >= 0x621  && unicode <= 0x66c)*   (unicode - 0x0621 + (0x0040-0x0020)) +
+		   (unicode >= 0xFE80 && unicode <= 0xFEFC)* (unicode - 0xFE80 + (0x0040-0x0020) + (0x066C-0x0621));
 	
 	/*if(unicode <= 0x3B){
 		return unicode - 37;
