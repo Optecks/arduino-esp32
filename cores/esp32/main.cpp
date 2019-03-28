@@ -1,6 +1,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "Arduino.h"
+#include "esp_task_wdt.h"
 
 #if CONFIG_AUTOSTART_ARDUINO
 
@@ -15,13 +16,17 @@ void loopTask(void *pvParameters)
     setup();
     for(;;) {
         loop();
+		esp_task_wdt_reset();
     }
 }
 
 extern "C" void app_main()
-{
+{	
     initArduino();
-    xTaskCreatePinnedToCore(loopTask, "loopTask", 80*1024, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
+	esp_task_wdt_init(60, true);
+	TaskHandle_t task_handler = nullptr;
+    xTaskCreatePinnedToCore(loopTask, "loopTask", 32*1024, NULL, 1, &task_handler, ARDUINO_RUNNING_CORE);
+	esp_task_wdt_add(task_handler);
 }
 
 #endif
