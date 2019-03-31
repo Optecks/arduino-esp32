@@ -1508,7 +1508,7 @@ void TFT_eSprite::drawGlyph(uint16_t code)
       this->cursor_y = 0;
     }
 
-    this->fontFile.seek(this->gBitmap[gNum], fs::SeekSet); // This is slow for a significant position shift!
+    //this->fontFile.seek(this->gBitmap[gNum], fs::SeekSet); // This is slow for a significant position shift!
 
     uint8_t pbuffer[this->gWidth[gNum]];
 
@@ -1517,7 +1517,7 @@ void TFT_eSprite::drawGlyph(uint16_t code)
 
     for (int y = 0; y < this->gHeight[gNum]; y++)
     {
-      this->fontFile.read(pbuffer, this->gWidth[gNum]);
+      //this->fontFile.read(pbuffer, this->gWidth[gNum]);
       for (int x = 0; x < this->gWidth[gNum]; x++)
       {
         uint8_t pixel = pbuffer[x];

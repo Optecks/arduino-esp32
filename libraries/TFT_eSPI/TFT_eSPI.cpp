@@ -2113,7 +2113,9 @@ uint16_t TFT_eSPI::fontsLoaded(void)
 int16_t TFT_eSPI::fontHeight(int16_t font)
 {
 #ifdef SMOOTH_FONT
-  if(fontLoaded && font != 1) return gFont.yAdvance;
+  if(fontLoaded && font != 1){
+	  return gFont.yAdvance*0.7;
+  }
 #endif
 
 #ifdef LOAD_GFXFF

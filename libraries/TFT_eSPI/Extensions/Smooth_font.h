@@ -16,7 +16,8 @@
   void     drawGlyph(uint16_t code);
   void     showFont(uint32_t td);
 
- fs::File   fontFile;
+ const uint8_t*   fontFile;
+ const uint8_t*   fontFileStart;
 
   // This is for the whole font
   typedef struct

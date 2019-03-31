@@ -10,9 +10,20 @@
 ** Function name:           loadFont
 ** Description:             loads parameters from a new font vlw file stored in SPIFFS
 *************************************************************************************x*/
+#define NOMINMAX
+#include <stdint.h>
+
+extern const uint8_t trado30_start[] asm("_binary_trado30_vlw_start");
+extern const uint8_t trado30_end[]   asm("_binary_trado30_vlw_end");
+
+
 #include "../TFT_eSPI.h"
+
 void TFT_eSPI::loadFont(String fontName)
 {
+	
+	
+  ESP_LOGE("TTT", "#loadFont");
   /*
     The vlw font format does not appear to be documented anywhere, so some reverse
     engineering has been applied!
@@ -75,15 +86,20 @@ void TFT_eSPI::loadFont(String fontName)
 
   */
 
-   unloadFont();
-    
-  _gFontFilename = "/" + fontName + ".vlw";
 
-  fontFile = SPIFFS.open( _gFontFilename, "r");
+   unloadFont();
+  _gFontFilename = "_binary_" + fontName + "_vlw_start";
+
+  if(fontName == "trado30"){
+	fontFile = trado30_start;	
+  }
+  else{
+	return;
+  }
+  fontFileStart = fontFile;
 
   if(!fontFile) return;
-
-  fontFile.seek(0, fs::SeekSet);
+ 
 
   gFont.gCount   = (uint16_t)readInt32(); // glyph count in file
                              readInt32(); // vlw encoder version - discard
@@ -103,7 +119,6 @@ void TFT_eSPI::loadFont(String fontName)
   // Fetch the metrics for each glyph
   loadMetrics(gFont.gCount);
 
-  fontFile.close();
 }
 
 
@@ -148,7 +163,8 @@ void TFT_eSPI::loadMetrics(uint16_t gCount)
 #endif
 
   uint16_t gNum = 0;
-  fontFile.seek(headerPtr, fs::SeekSet);
+  //fontFile.seek(headerPtr, fs::SeekSet);
+  fontFile = fontFileStart + headerPtr;
   Serial.println("CCCCCOOOOOOUUUUUUUUNT: " + String(gCount));
   while (gNum < gCount)
   {
@@ -209,10 +225,14 @@ void TFT_eSPI::loadMetrics(uint16_t gCount)
   uint32_t gBitmapDataPtr = 0;
   while (gNum < gCount)
   {
-	fontFile.seek(gBitmap[gNum], fs::SeekSet); // This is taking >30ms for a significant position shift
+	//fontFile.seek(gBitmap[gNum], fs::SeekSet); // This is taking >30ms for a significant position shift
+	fontFile = fontFileStart + gBitmap[gNum];
     for (int y = 0; y < gHeight[gNum]; y++)
     {
-      fontFile.read(gBitmapData + gBitmapDataPtr, gWidth[gNum]); //<//
+      //fontFile.read(gBitmapData + gBitmapDataPtr, gWidth[gNum]); //<//
+	  memcpy(gBitmapData + gBitmapDataPtr, fontFile, gWidth[gNum]);
+	  fontFile +=gWidth[gNum];
+	  
 	  gBitmapDataPtr += gWidth[gNum];	  
 	}
 	gBitmap[gNum] -= bitmapPtrStart;
@@ -229,58 +249,74 @@ void TFT_eSPI::loadMetrics(uint16_t gCount)
 *************************************************************************************x*/
 void TFT_eSPI::unloadFont( void )
 {
+	
+  ESP_LOGE("TTT", "#1");
   if (gUnicode)
   {
     free(gUnicode);
     gUnicode = NULL;
   }
+  ESP_LOGE("TTT", "#2");
 
   if (gHeight)
   {
     free(gHeight);
     gHeight = NULL;
   }
+  ESP_LOGE("TTT", "#3");
 
   if (gWidth)
   {
     free(gWidth);
     gWidth = NULL;
   }
+  ESP_LOGE("TTT", "#4");
 
   if (gxAdvance)
   {
     free(gxAdvance);
     gxAdvance = NULL;
   }
+  ESP_LOGE("TTT", "#5");
 
   if (gdY)
   {
     free(gdY);
     gdY = NULL;
   }
+  ESP_LOGE("TTT", "#6");
 
   if (gdX)
   {
     free(gdX);
     gdX = NULL;
   }
+  ESP_LOGE("TTT", "#7");
 
   if (gBitmap)
   {
     free(gBitmap);
     gBitmap = NULL;
   }
+  ESP_LOGE("TTT", "#8");
   
   if(gBitmapData){
 	  free(gBitmapData);
 	  gBitmapData = NULL;
   }
+  ESP_LOGE("TTT", "#9");
 
   if(gUnicodeIndexHash){
 	free(gUnicodeIndexHash);
 	gUnicodeIndexHash = NULL;
   }
-  if(fontFile) fontFile.close();
+  ESP_LOGE("TTT", "#10");
+  
+  if(fontFile){ 
+	//fontFile.close();
+  }
+  ESP_LOGE("TTT", "#11");
+  
   fontLoaded = false;
 }
 
@@ -401,10 +437,11 @@ uint16_t TFT_eSPI::alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc)
 uint32_t TFT_eSPI::readInt32(void)
 {
   uint32_t val = 0;
-  val |= fontFile.read() << 24;
-  val |= fontFile.read() << 16;
-  val |= fontFile.read() << 8;
-  val |= fontFile.read();
+  val |= fontFile[0] << 24;
+  val |= fontFile[1] << 16;
+  val |= fontFile[2] << 8;
+  val |= fontFile[3];
+  fontFile += 4;
   return val;
 }
 
