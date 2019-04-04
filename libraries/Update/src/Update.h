@@ -164,7 +164,8 @@ class UpdateClass {
 
 
     uint8_t _error;
-    uint8_t *_buffer;
+    uint8_t *_buffer;	
+	uint8_t _first_bytes[16];
     size_t _bufferLen;
     size_t _size;
     THandlerFunction_Progress _progress_callback;

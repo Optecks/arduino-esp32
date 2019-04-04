@@ -3,6 +3,8 @@
 #include "esp_spi_flash.h"
 #include "esp_ota_ops.h"
 #include "esp_image_format.h"
+#include "esp_task_wdt.h"
+#include "esp_flash_encrypt.h"
 
 static const char * _err2str(uint8_t _error){
     if(_error == UPDATE_ERROR_OK){
@@ -36,31 +38,45 @@ static const char * _err2str(uint8_t _error){
 }
 
 static bool _partitionIsBootable(const esp_partition_t* partition){
-    uint8_t buf[4];
+    uint8_t buf[32];
     if(!partition){
+		Serial.println("#1");
         return false;
     }
-    if(!ESP.flashRead(partition->address, (uint32_t*)buf, 4)) {
+	auto err = spi_flash_read_encrypted(partition->address, buf, 32);
+	if(err != ESP_OK){
+		Serial.println("#2");
+		Serial.println(err);		
         return false;
     }
 
     if(buf[0] != ESP_IMAGE_HEADER_MAGIC) {
+		Serial.println("#3");
+		Serial.println(buf[0], HEX);
         return false;
     }
     return true;
 }
 
-static bool _enablePartition(const esp_partition_t* partition){
-    uint8_t buf[4];
+static bool _enablePartition(const esp_partition_t* partition, uint8_t* _first_bytes){
+    uint8_t buf[32];
     if(!partition){
         return false;
     }
-    if(!ESP.flashRead(partition->address, (uint32_t*)buf, 4)) {
+	auto err_spi_flash_read_encrypted =  spi_flash_read(partition->address, buf, 32);
+	Serial.println(err_spi_flash_read_encrypted);
+    if(err_spi_flash_read_encrypted != ESP_OK) {
         return false;
     }
-    buf[0] = ESP_IMAGE_HEADER_MAGIC;
-
-    return ESP.flashWrite(partition->address, (uint32_t*)buf, 4);
+    for(size_t i = 0; i< 16; ++i){
+		buf[i] = _first_bytes[i];
+	}
+	if(esp_flash_encryption_enabled()){
+		auto err = spi_flash_write(partition->address, buf, 32);
+		return err == ESP_OK;
+	}else{
+		return false;
+	}
 }
 
 UpdateClass::UpdateClass()
@@ -174,25 +190,33 @@ bool UpdateClass::_writeBuffer(){
     //first bytes of new firmware
     if(!_progress && _command == U_FLASH){
         //check magic
-        if(_buffer[0] != ESP_IMAGE_HEADER_MAGIC){
+        /*if(_buffer[0] != ESP_IMAGE_HEADER_MAGIC){
             _abort(UPDATE_ERROR_MAGIC_BYTE);
             return false;
-        }
+        }*/
+		for(size_t i = 0; i < 16; ++i){
+			_first_bytes[i] = _buffer[i];
+		}
         //remove magic byte from the firmware now and write it upon success
         //this ensures that partially written firmware will not be bootable
-        _buffer[0] = 0xFF;
+        for(size_t i = 0; i < 16; ++i){
+			_buffer[i] = 0xFF;
+		}
     }
-    if(!ESP.flashEraseSector((_partition->address + _progress)/SPI_FLASH_SEC_SIZE)){
+    if(spi_flash_erase_sector((_partition->address + _progress)/SPI_FLASH_SEC_SIZE) != ESP_OK){
         _abort(UPDATE_ERROR_ERASE);
         return false;
     }
-    if (!ESP.flashWrite(_partition->address + _progress, (uint32_t*)_buffer, _bufferLen)) {
+	if(spi_flash_write(_partition->address + _progress, _buffer, _bufferLen) != ESP_OK){
         _abort(UPDATE_ERROR_WRITE);
         return false;
     }
     //restore magic or md5 will fail
     if(!_progress && _command == U_FLASH){
-        _buffer[0] = ESP_IMAGE_HEADER_MAGIC;
+        //_buffer[0] = ESP_IMAGE_HEADER_MAGIC;
+		for(size_t i = 0; i< 16; ++i){
+			_buffer[i] = _first_bytes[i];
+		}
     }
     _md5.add(_buffer, _bufferLen);
     _progress += _bufferLen;
@@ -215,10 +239,17 @@ bool UpdateClass::_verifyHeader(uint8_t data) {
 
 bool UpdateClass::_verifyEnd() {
     if(_command == U_FLASH) {
-        if(!_enablePartition(_partition) || !_partitionIsBootable(_partition)) {
+        if(!_enablePartition(_partition,_first_bytes)) {
+			Serial.println("!_enablePartition");
             _abort(UPDATE_ERROR_READ);
             return false;
         }
+		
+		if(!_partitionIsBootable(_partition)){
+			Serial.println("!_partitionIsBootable");
+			_abort(UPDATE_ERROR_READ);
+            return false;
+		}
 
         if(esp_ota_set_boot_partition(_partition)){
             _abort(UPDATE_ERROR_ACTIVATE);
@@ -308,10 +339,10 @@ size_t UpdateClass::writeStream(Stream &data) {
     if(hasError() || !isRunning())
         return 0;
 
-    if(!_verifyHeader(data.peek())) {
+    /*if(!_verifyHeader(data.peek())) {
         _reset();
         return 0;
-    }
+    }*/
     if (_progress_callback) {
         _progress_callback(0, _size);
     }
@@ -331,7 +362,8 @@ size_t UpdateClass::writeStream(Stream &data) {
         written += toRead;
         if(_progress_callback) {
             _progress_callback(_progress, _size);
-        }
+        }		
+		esp_task_wdt_reset();
     }
     if(_progress_callback) {
         _progress_callback(_size, _size);
