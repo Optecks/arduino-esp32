@@ -47,11 +47,9 @@ void ssl_init(sslclient_context *ssl_client)
 
 int start_ssl_client(sslclient_context *ssl_client, const char *host, uint32_t port, const char *rootCABuff, const char *cli_cert, const char *cli_key)
 {
-    char buf[512];
     int ret, flags, timeout;
     int enable = 1;
-    log_v("Free heap before TLS %u", xPortGetFreeHeapSize());
-
+    log_v("Free heap before TLS %u", xPortGetFreeHeapSize());	
     log_v("Starting socket");
     ssl_client->socket = -1;
 
@@ -179,6 +177,7 @@ int start_ssl_client(sslclient_context *ssl_client, const char *host, uint32_t p
     log_v("Verifying peer X.509 certificate...");
 
     if ((flags = mbedtls_ssl_get_verify_result(&ssl_client->ssl_ctx)) != 0) {
+		char buf[512];
         bzero(buf, sizeof(buf));
         mbedtls_x509_crt_verify_info(buf, sizeof(buf), "  ! ", flags);
         log_e("Failed to verify peer certificate! verification info: %s", buf);
@@ -200,8 +199,7 @@ int start_ssl_client(sslclient_context *ssl_client, const char *host, uint32_t p
         mbedtls_pk_free(&ssl_client->client_key);
     }    
 
-    log_v("Free heap after TLS %u", xPortGetFreeHeapSize());
-
+    log_v("Free heap after TLS %u", xPortGetFreeHeapSize());	
     return ssl_client->socket;
 }
 

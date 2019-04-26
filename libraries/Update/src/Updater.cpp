@@ -349,11 +349,15 @@ size_t UpdateClass::writeStream(Stream &data) {
     while(remaining()) {
         toRead = data.readBytes(_buffer + _bufferLen,  (SPI_FLASH_SEC_SIZE - _bufferLen));
         if(toRead == 0) { //Timeout
-            delay(100);
+            delay(1500);
             toRead = data.readBytes(_buffer + _bufferLen, (SPI_FLASH_SEC_SIZE - _bufferLen));
             if(toRead == 0) { //Timeout
-                _abort(UPDATE_ERROR_STREAM);
-                return written;
+				delay(1500);
+				toRead = data.readBytes(_buffer + _bufferLen, (SPI_FLASH_SEC_SIZE - _bufferLen));
+                if(toRead == 0) {
+					_abort(UPDATE_ERROR_STREAM);
+					return written;
+				}
             }
         }
         _bufferLen += toRead;
