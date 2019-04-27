@@ -157,14 +157,14 @@
 #define TFT_RST  -1  // Reset pin, toggles on startup
 
 #define TFT_WR   4  // Write strobe control pin - use a pin in the range 0-31
-#define TFT_RD    3  // Read strobe control pin  - use a pin in the range 0-31
+#define TFT_RD    -1  // Read strobe control pin  - use a pin in the range 0-31
 
 #define TFT_D0   22  // Must use pins in the range 0-31 for the data bus
 #define TFT_D1   13  // so a single register write sets/clears all bits.
-#define TFT_D2    9  // Pins can be randomly assigned, this does not affect
+#define TFT_D2    26  // Pins can be randomly assigned, this does not affect
 #define TFT_D3   0  // TFT screen update performance.
-#define TFT_D4   17
-#define TFT_D5   16
+#define TFT_D4   12
+#define TFT_D5   21
 #define TFT_D6   27
 #define TFT_D7   14
 
