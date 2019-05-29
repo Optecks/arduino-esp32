@@ -140,14 +140,14 @@ bool HTTPClient::begin(WiFiClient &client, String url) {
     }
 
     String protocol = url.substring(0, index);
-	ESP_LOGI("HTTTP", "Protocol: %s", protocol.c_str());
+	//log_w("Protocol: %s", protocol.c_str());
     if(protocol != "http" && protocol != "https") {
         log_d("unknown protocol '%s'", protocol.c_str());
         return false;
     }
 
     _port = (protocol == "https" ? 443 : 80);
-	ESP_LOGI("HTTTP", "_port: %d", _port);
+	//log_w("_port: %d", _port);
     return beginInternal(url, protocol.c_str());
 }
 
