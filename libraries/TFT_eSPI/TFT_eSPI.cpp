@@ -2030,18 +2030,18 @@ int16_t TFT_eSPI::textWidth(const char *string, int font)
       uint16_t unicode = decodeUTF8(*string++);
       if (unicode)
       {
-        if (unicode == 0x20) str_width += gFont.spaceWidth;
+        if (unicode == 0x20) str_width += gFont[font_index].spaceWidth;
         else
         {
           uint16_t gNum = 0;
           bool found = getUnicodeIndex(unicode, &gNum);
           if (found)
           {
-            if(str_width == 0 && gdX[gNum] < 0) str_width -= gdX[gNum];
-            if (*string) str_width += gxAdvance[gNum];
-            else str_width += (gdX[gNum] + gWidth[gNum]);
+            if(str_width == 0 && gdX[font_index][gNum] < 0) str_width -= gdX[font_index][gNum];
+            if (*string) str_width += gxAdvance[font_index][gNum];
+            else str_width += (gdX[font_index][gNum] + gWidth[font_index][gNum]);
           }
-          else str_width += gFont.spaceWidth + 1;
+          else str_width += gFont[font_index].spaceWidth + 1;
         }
       }
     }
@@ -2116,7 +2116,7 @@ int16_t TFT_eSPI::fontHeight(int16_t font)
 {
 #ifdef SMOOTH_FONT
   if(fontLoaded && font != 1){
-	  return gFont.yAdvance*0.7;
+	  return gFont[font_index].yAdvance*0.7;
   }
 #endif
 
@@ -4102,7 +4102,7 @@ int16_t TFT_eSPI::drawString(const char *string, int poX, int poY, int font)
     // If it is not font 1 (GLCD or free font) get the baseline and pixel height of the font
 #ifdef SMOOTH_FONT
     if(fontLoaded && font != 1) {
-      baseline = gFont.maxAscent;
+      baseline = gFont[font_index].maxAscent;
       cheight  = fontHeight(0);
     }
 
@@ -5060,7 +5060,7 @@ void TFT_eSPI::setTouch(uint16_t *parameters){
   #include "Extensions/Button.cpp"
 #endif
 
-#include "Extensions/Sprite.cpp"
+//#include "Extensions/Sprite.cpp"
 
 #ifdef SMOOTH_FONT
   #include "Extensions/Smooth_font.cpp"

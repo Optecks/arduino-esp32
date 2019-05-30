@@ -90,6 +90,8 @@
 
 #include <cstdint>
 
+
+#include <vector>
 #ifdef SMOOTH_FONT
   // Call up the SPIFFS FLASH filing system for the anti-aliased fonts
   #define FS_NO_GLOBALS
@@ -740,6 +742,6 @@ class TFT_eSPI : public Print {
 #include "Extensions/Button.h"
 
 // Load the Sprite Class
-#include "Extensions/Sprite.h"
+//#include "Extensions/Sprite.h"
 
 #endif

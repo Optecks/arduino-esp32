@@ -7,7 +7,7 @@
   void     loadFont(String fontName);
   void     unloadFont( void );
   bool     getUnicodeIndex(uint16_t unicode, uint16_t *index);
-
+  void     set_unicode_font(size_t font_ind);
   uint16_t decodeUTF8(uint8_t *buf, uint16_t *index, uint16_t remaining);
   uint16_t decodeUTF8(uint8_t c);
 
@@ -16,9 +16,10 @@
   void     drawGlyph(uint16_t code);
   void     showFont(uint32_t td);
 
- const uint8_t*   fontFile;
- const uint8_t*   fontFileStart;
+ std::vector<const uint8_t*>   fontFile;
+ std::vector<const uint8_t*>   fontFileStart;
 
+size_t font_index = 0;
   // This is for the whole font
   typedef struct
   {
@@ -31,20 +32,20 @@
     uint16_t maxDescent; // Maximum descent found in font
   } fontMetrics;
 
-fontMetrics gFont = { 0, 0, 0, 0, 0, 0, 0 };
+   std::vector<fontMetrics> gFont;// = { 0, 0, 0, 0, 0, 0, 0 };
 
-  uint16_t* gUnicodeIndexHash = NULL;
-  uint8_t* gBitmapData = NULL;
+   std::vector<uint16_t*> gUnicodeIndexHash{5};
+   std::vector<uint8_t*> gBitmapData{5};
   // These are for the metrics for each individual glyph (so we don't need to seek this in file and waste time)
-  uint16_t* gUnicode = NULL;  //UTF-16 code, the codes are searched so do not need to be sequential
-  uint8_t*  gHeight = NULL;   //cheight
-  uint8_t*  gWidth = NULL;    //cwidth
-  uint8_t*  gxAdvance = NULL; //setWidth
-  int8_t*   gdY = NULL;       //topExtent
-  int8_t*   gdX = NULL;       //leftExtent
-  uint32_t* gBitmap = NULL;   //file pointer to greyscale bitmap
+   std::vector<uint16_t*> gUnicode{5};  //UTF-16 code, the codes are searched so do not need to be sequential
+   std::vector<uint8_t*>  gHeight{5};   //cheight
+   std::vector<uint8_t*>  gWidth{5};    //cwidth
+   std::vector<uint8_t*>  gxAdvance{5}; //setWidth
+   std::vector<int8_t*>   gdY{5};       //topExtent
+   std::vector<int8_t*>   gdX{5};       //leftExtent
+   std::vector<uint32_t*> gBitmap{5};   //file pointer to greyscale bitmap
 
-  String   _gFontFilename;
+  std::vector<String>   _gFontFilename;
 
   uint8_t  decoderState = 0;   // UTF8 decoder state
   uint16_t decoderBuffer;      // Unicode code-point buffer
@@ -53,5 +54,5 @@ fontMetrics gFont = { 0, 0, 0, 0, 0, 0, 0 };
 
  private:
 
-  void     loadMetrics(uint16_t gCount);
-  uint32_t readInt32(void);
+  void     loadMetrics(uint16_t gCount, size_t i);
+  uint32_t readInt32(size_t i);
