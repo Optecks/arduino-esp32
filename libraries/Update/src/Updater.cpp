@@ -333,6 +333,7 @@ size_t UpdateClass::write(uint8_t *data, size_t len) {
     return len;
 }
 
+size_t attempts = 0;
 size_t UpdateClass::writeStream(Stream &data) {
     size_t written = 0;
     size_t toRead = 0;
@@ -348,18 +349,17 @@ size_t UpdateClass::writeStream(Stream &data) {
     }
     while(remaining()) {
         toRead = data.readBytes(_buffer + _bufferLen,  (SPI_FLASH_SEC_SIZE - _bufferLen));
-        if(toRead == 0) { //Timeout
-            delay(1500);
-            toRead = data.readBytes(_buffer + _bufferLen, (SPI_FLASH_SEC_SIZE - _bufferLen));
-            if(toRead == 0) { //Timeout
-				delay(1500);
-				toRead = data.readBytes(_buffer + _bufferLen, (SPI_FLASH_SEC_SIZE - _bufferLen));
-                if(toRead == 0) {
-					_abort(UPDATE_ERROR_STREAM);
-					return written;
-				}
-            }
-        }
+        if(toRead == 0) { //Timeout		
+			Serial.println("Nothing" + String(attempts));
+			++attempts;
+			if(attempts>20){
+				_abort(UPDATE_ERROR_STREAM);
+				return written;
+			}
+
+        }else{
+			attempts = 0;
+		}
         _bufferLen += toRead;
         if((_bufferLen == remaining() || _bufferLen == SPI_FLASH_SEC_SIZE) && !_writeBuffer())
             return written;
