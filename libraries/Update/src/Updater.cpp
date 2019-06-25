@@ -352,7 +352,7 @@ size_t UpdateClass::writeStream(Stream &data) {
         if(toRead == 0) { //Timeout		
 			Serial.println("Nothing" + String(attempts));
 			++attempts;
-			if(attempts>20){
+			if(attempts>100){
 				_abort(UPDATE_ERROR_STREAM);
 				return written;
 			}

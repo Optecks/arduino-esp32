@@ -120,7 +120,7 @@
  #define TFT_MISO 19
  #define TFT_MOSI 23
  #define TFT_SCLK 18
-#define TFT_CS    15  // Chip select control pin
+#define TFT_CS    -1  // Chip select control pin
 #define TFT_DC    2  // Data Command control pin
 #define TFT_RST   -1  // Reset pin (could connect to RST pin)
 //#define TFT_WR 17
@@ -132,8 +132,7 @@
 //#define TFT_DC   27  // Data Command control pin
 //#define TFT_RST  33  // Reset pin (could connect to Arduino RESET pin)
 //#define TFT_BL   32  // LED back-light
-
-//#define TOUCH_CS 21     // Chip select pin (T_CS) of touch screen
+#define TOUCH_CS 15     // Chip select pin (T_CS) of touch screen
 
 //#define TFT_WR 22    // Write strobe for modified Raspberry Pi TFT only
 
@@ -152,7 +151,7 @@
 #define ESP32_PARALLEL
 
 // The EadwwSP32 and TFT the pins used for testing are:
-#define TFT_CS   15  // Chip select control pin (library pulls permanently low
+#define TFT_CS   -1  // Chip select control pin (library pulls permanently low
 #define TFT_DC   2  // Data Command control pin - use a pin in the range 0-31
 #define TFT_RST  -1  // Reset pin, toggles on startup
 
@@ -230,8 +229,8 @@
 // #define SPI_FREQUENCY   1000000
 // #define SPI_FREQUENCY   5000000
 // #define SPI_FREQUENCY  10000000
- #define SPI_FREQUENCY  20000000
-//#define SPI_FREQUENCY  27000000 // Actually sets it to 26.67MHz = 80/3
+#define SPI_FREQUENCY  20000000
+// #define SPI_FREQUENCY  27000000 // Actually sets it to 26.67MHz = 80/3
 // #define SPI_FREQUENCY  40000000 // Maximum to use SPIFFS
 // #define SPI_FREQUENCY  80000000
 
@@ -249,4 +248,4 @@
 // Transactions are automatically enabled by the library for an ESP32 (to use HAL mutex)
 // so changing it here has no effect
 
-//#define SUPPORT_TRANSACTIONS
+#define SUPPORT_TRANSACTIONS
