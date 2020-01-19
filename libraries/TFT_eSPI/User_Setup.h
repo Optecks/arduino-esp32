@@ -132,7 +132,7 @@
 //#define TFT_DC   27  // Data Command control pin
 //#define TFT_RST  33  // Reset pin (could connect to Arduino RESET pin)
 //#define TFT_BL   32  // LED back-light
-#define TOUCH_CS 15     // Chip select pin (T_CS) of touch screen
+//#define TOUCH_CS 15     // Chip select pin (T_CS) of touch screen
 
 //#define TFT_WR 22    // Write strobe for modified Raspberry Pi TFT only
 
@@ -152,20 +152,20 @@
 
 // The EadwwSP32 and TFT the pins used for testing are:
 #define TFT_CS   -1  // Chip select control pin (library pulls permanently low
-#define TFT_DC   2  // Data Command control pin - use a pin in the range 0-31
+#define TFT_DC   26 // Expander // Data Command control pin - use a pin in the range 0-31
 #define TFT_RST  -1  // Reset pin, toggles on startup
 
-#define TFT_WR   4  // Write strobe control pin - use a pin in the range 0-31
+#define TFT_WR   4  // Expander // Write strobe control pin - use a pin in the range 0-31
 #define TFT_RD    -1  // Read strobe control pin  - use a pin in the range 0-31
 
-#define TFT_D0   22  // Must use pins in the range 0-31 for the data bus
-#define TFT_D1   13  // so a single register write sets/clears all bits.
-#define TFT_D2    26  // Pins can be randomly assigned, this does not affect
-#define TFT_D3   0  // TFT screen update performance.
-#define TFT_D4   12
-#define TFT_D5   21
-#define TFT_D6   27
-#define TFT_D7   14
+#define TFT_D0   14  // Must use pins in the range 0-31 for the data bus
+#define TFT_D1   12  // so a single register write sets/clears all bits.
+#define TFT_D2    13  // Pins can be randomly assigned, this does not affect
+#define TFT_D3   15  // TFT screen update performance.
+#define TFT_D4   2
+#define TFT_D5   0
+#define TFT_D6   21
+#define TFT_D7   22
 
 // ##################################################################################
 //
